@@ -2,14 +2,17 @@
 First project of SEI at GA
 
 ## USER STORY
-1. User clicks ‘DEAL’ to give both computer and user new cards
-2. User waits for computer’s turn
-3. User sees cards dealt (computer’s hands remain unseen by user)
-4. User clicks ‘HIT’ if user would like another card in their hand
-5. User clicks ‘DONE’ if user wants to compare cards with computer
-6. Total for each player’s hands and winner is displayed in the center of the game
-7. User can choose ‘DEAL’, which will deal new hands to each player
-8. User can choose ‘NEW GAME’ to reshuffle the deck and play a new game
+1.	User clicks ‘START GAME’
+2.	User presses either left or right key to move the ship and avoid blocks as they fall
+3.	After certain amount of time, game gets faster or ship gets bigger after time
+4.	If user touches the block, user loses.
+5.	User is prompted to play again
+6.	User sees score at end of game
+
+Possible extras to gameplay:
+-	Moving blocks side to side
+-	User can pick character at beginning
+
 
 ## Technical Requirements
 Your app must:
