@@ -1,4 +1,4 @@
-# Project-1 (BLACKJACK)
+# Project-1 (Maze Game)
 First project of SEI at GA
 
 ## USER STORY
