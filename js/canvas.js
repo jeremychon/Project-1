@@ -101,7 +101,7 @@ const square = {
 	},
 
 	move () {
-		if (this.direction.up && this.y > ) this.y -= this.speed;
+		if (this.direction.up) this.y -= this.speed;
 		if (this.direction.left) this.x -= this.speed;
 		if (this.direction.down) this.y += this.speed;
 		if (this.direction.right) this.x += this.speed;
