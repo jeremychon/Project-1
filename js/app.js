@@ -4,18 +4,73 @@ class ship {
 	constructor () {
 		// attributes: name, speed, score, color, type of ship, etc.
 		this.name = "";
+		this.x = 300;
+		this.y = 700;
+		this.r = 25;
+		this.color = 'black';
+		this.speed = 10;
+		this.direction = {
+			up: false,
+			left: false,
+			down: false,
+			right: false
+		}
 	}
 
 	// movement going left and right (possibly up and down)
+	makeShip () {
+		const canvas = document.getElementById('my-canvas')
+		const ctx = canvas.getContext('2d')
+
+		ctx.beginPath()
+		ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2)
+		ctx.fillStyle = this.color;
+		ctx.fill()
+	}
+
+	setDirection (key) {
+		if (key == 'ArrowUp') this.direction.up = true;
+		if (key == 'ArrowLeft') this.direction.left = true;
+		if (key == 'ArrowDown') this.direction.down = true;
+		if (key == 'ArrowRight') this.direction.right = true;
+	}
+
+	unsetDirection (key) {
+		if (key == 'ArrowUp') this.direction.up = false;
+		if (key == 'ArrowLeft') this.direction.left = false;
+		if (key == 'ArrowDown') this.direction.down = false;
+		if (key == 'ArrowRight') this.direction.right = false;
+	}
+	
+	moveShip () {
+		if (this.direction.up) this.y -= this.speed
+		if (this.direction.left) this.x -= this.speed
+		if (this.direction.down) this.y += this.speed
+		if (this.direction.right) this.x += this.speed
+	}
 }
 
 
 // all the game logic will go here
 const game = {
 
-	// playGame ()
+	ship: null,
+
+	playGame () {
+		const $ship = new ship()
+		this.ship = $ship
+		$ship.makeShip()
+	}
 
 	// 
+
+}
+
+game.playGame()
+
+
+let x = 0;
+function animate () {
 
 }
 
@@ -23,53 +78,17 @@ const game = {
 
 // any event listeners will go here
 
+document.addEventListener('keydown', (e) => {
+	console.log(e.key);
+})
 
 
 
 
 
 
-const canvas = document.getElementById('myCanvas');
-console.log(canvas);
 
-const ctx = canvas.getContext('2d');
-console.log(ctx); 
 
-function makeX () {
-	// telling the canvas we're starting a new line
-	ctx.beginPath()
-
-	// start the line here
-	ctx.moveTo(100, 100)
-
-	// end the line here
-	ctx.lineTo(300, 300)
-
-	// style your stroke -- any valid CSS color value works
-	ctx.strokeStyle = "blue";
-
-	// this will "stick" until you change it
-	ctx.lineWidth = 6;
-
-	// draw the line
-	ctx.stroke()
-
-	ctx.beginPath()
-	ctx.moveTo(300, 100)
-	ctx.lineTo(100, 300);
-	ctx.stroke()
-}
-
-// makeX()
-
-function drawGrid () {
-	for (let i = 0; i < canvas.width / 50; i += 50) {
-		ctx.beginPath()
-		ctx.moveTo(i, 0)
-		ctx.lineTo(i, canvas.height)
-	}
-
-}
 
 
 
