@@ -118,24 +118,24 @@ const game = {
 		this.setTimer()
 	},
 
-	// setTimer () {
-	// 	this.intervalID = setInterval( () => {
-	// 		this.time.seconds++;
+	setTimer () {
+		this.intervalID = setInterval( () => {
+			this.time.seconds++;
 
-	// 		// every 60 seconds, increase the minute by 1
-	// 		if (this.time.seconds === 60) {
-	// 			this.time.minutes++
-	// 			this.time.seconds = 0;
-	// 		}
+			// every 60 seconds, increase the minute by 1
+			if (this.time.seconds === 60) {
+				this.time.minutes++
+				this.time.seconds = 0;
+			}
 
-	// 		// every 60 minutes, increase the hour by 1
-	// 		if (this.time.minutes === 60) {
-	// 			this.time.hours++
-	// 		}
+			// every 60 minutes, increase the hour by 1
+			if (this.time.minutes === 60) {
+				this.time.hours++
+			}
 
-	// 		$('#time').text(`Time: ${this.time.hours}h ${this.time.minutes}m ${this.time.seconds}s`)
-	// 	}, 1000)
-	// },
+			$('#time').text(`Time: ${this.time.hours}h ${this.time.minutes}m ${this.time.seconds}s`)
+		}, 1000)
+	},
 
 	makeObstacles(num) {
 		
