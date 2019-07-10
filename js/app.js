@@ -14,9 +14,9 @@ class Ship {
 		this.speed = 7;
 		this.isAlive = true
 		this.direction = {
-			// up: false,
+			up: false,
 			left: false,
-			// down: false,
+			down: false,
 			right: false
 		}
 	}
@@ -30,9 +30,9 @@ class Ship {
 	}
 
 	moveShip () {
-		if (this.direction.up) this.y -= this.speed
+		if (this.direction.up == true && this.y > this.r) this.y -= this.speed
 		if (this.direction.left == true && this.x > this.r) this.x -= this.speed
-		if (this.direction.down) this.y += this.speed
+		if (this.direction.down == true && this.y < canvas.height - this.r) this.y += this.speed
 		if (this.direction.right == true && this.x < canvas.width - this.r) this.x += this.speed
 	}
 
@@ -60,38 +60,24 @@ class Ship {
 }
 
 class Obstacle {
-	constructor () {
-		this.x = 0;
+	constructor (obsX, obsWidth) {
+		this.x = obsX;
 		this.y = 0;
 		this.height = 20;
-		this.width = Math.floor(Math.random() * (400 - 100 + 1)) + 100;
-		this.gap = Math.floor(Math.random() * (200 - 100 + 1)) + 100
+		this.width = obsWidth;
 		this.color = "green";
 		this.speed = 3;
 	}
 
-	makeLeftObstacle () {
+	draw () {
 		ctx.beginPath()
 		ctx.rect(this.x, this.y, this.width, this.height)
 		ctx.fillStyle = this.color
 		ctx.fill()
 	}
 
-	makeRightObstacle () {
-		ctx.beginPath()
-		ctx.rect(this.width + this.gap, this.y, canvas.width - (this.width + this.gap) , this.height)
-		ctx.fillStyle = this.color
-		ctx.fill()
-	}
-
-	fallLeft () {
+	fall() {
 		this.y += this.speed
-		this.makeLeftObstacle()
-	}
-
-	fallRight () {
-		this.y += this.speed		
-		this.makeRightObstacle()
 	}
 }
 
@@ -100,9 +86,7 @@ class Obstacle {
 const game = {
 
 	ship: null,
-	leftBlock: [],
-	rightBlock: [],
-	frame: 0,
+	block: [],
 	intervalID: null,
 
 	playGame () {
@@ -111,25 +95,45 @@ const game = {
 		this.ship = player
 		console.log(this.ship);
 
-		this.setTimer();
+		// this.makeObstacles()
 	},
 
-	setTimer () {
-		this.intervalID = setInterval( () => {
-			const obstacle = new Obstacle()
-			obstacle.makeLeftObstacle();
-			this.leftBlock.push(obstacle);
-			// console.log(this.leftBlock);
-			this.frame = this.leftBlock.length
-		}, 1000)
+	// setTimer () {
+	// 	this.intervalID = setInterval( () => {
 
-		this.intervalID = setInterval( () => {
-			const obstacle = new Obstacle()
-			obstacle.makeRightObstacle();
-			this.rightBlock.push(obstacle);
-			// console.log(this.rightBlock);
-			this.frame = this.rightBlock.length
-		}, 1000)
+	// 	}, 1000)
+	// },
+
+	makeObstacles(num) {
+		
+		let regionSize = 600 / num
+		const gap = 100
+
+		if (num === 1) {
+			for (let i = 1; i <= 1; i++) {
+			const obs = new Obstacle(Math.floor(Math.random() * 100) + 1, Math.floor(Math.random() * (500 - 200 + 1) + 200))
+			obs.draw()
+			this.block.push(obs)
+			}
+		}
+
+		if (num === 2) {
+			for (let i = 0; i < 1; i++) {
+				const obs = new Obstacle(0, Math.floor(Math.random() * (400 - 100 + 1) + 100))
+				obs.draw()
+				this.block.push(obs)
+			}
+
+
+			for (let i = 0; i < 1; i += 2) {
+				const obs = new Obstacle(parseInt(this.block[this.block.length - 1].width) + 100, canvas.width - (parseInt(this.block[this.block.length - 1].width)))
+				obs.draw()
+				this.block.push(obs)
+			}
+
+			// console.log(this.block);
+		}
+
 	},
 
 	clearCanvas () {
@@ -153,37 +157,36 @@ const game = {
 			return true; 
 		}
 	},
-
-	// 
-
 }
 
 game.playGame()
 
 let x = 0;
+let it;
 function animate () {
-	// console.log(x++);
+
 	game.ship.moveShip();
 	game.clearCanvas();
 	game.ship.makeShip();
 
+	x++
 
-	// every 
-	for (let i = 0; i < game.frame; i++) {
-		game.leftBlock[i].fallLeft()
-		game.rightBlock[i].fallRight()
-		if (game.checkCollision(game.ship, game.leftBlock[i])) {
-			game.ship.isAlive = false
-			game.ship.gameOver()
-			return;
-		}
-		if (game.checkCollision(game.ship, game.rightBlock[i])) {
+	if (x % 60 == 0) {
+		game.makeObstacles(2)
+	}
+
+	for (let i = 0; i < game.block.length; i++) {
+		game.block[i].fall()
+		game.block[i].draw()
+
+		if (game.checkCollision(game.ship, game.block[i])) {
 			game.ship.isAlive = false
 			game.ship.gameOver()
 			return;
 		}
 	}
-			window.requestAnimationFrame(animate)
+	
+	it = window.requestAnimationFrame(animate)
 
 }
 
@@ -197,7 +200,10 @@ document.addEventListener('keydown', (e) => {
 	if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) {
 		game.ship.setDirection(e.key)
 	}
-	console.log(e.key);
+	if(e.key==" ") {
+		cancelAnimationFrame(it)
+		clearInterval(game.intervalID)
+	}
 
 })
 
