@@ -1,14 +1,36 @@
 body {
-	text-align: center;
+	display: flex;
+	flex-wrap: wrap;
 }
 
-canvas {
+#theCanvas {
+	display: flex;
+	align-self: center;
+}
+
+#my-canvas {
   border: 1px solid black;
   background-color: rgb(220, 220, 220);
 }
 
-#time {
-	height: 50px;
-	width: 150px;
+#stats {
 	background-color: lightblue;
+	height: 200px;
+	width: 150px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+#time {
+	background-color: lavender;
+	height: 100px;
+	width: 150px;
+}
+
+#score {
+	background-color: lightblue;
+	height: 100px;
+	width: 150px;
 }

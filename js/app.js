@@ -9,10 +9,10 @@ class Ship {
 		this.name = name;
 		this.x = 300;
 		this.y = 680;
-		this.r = 25;
+		this.r = 20;
 		this.color = 'black';
 		this.speed = 7;
-		this.isAlive = true
+		this.isAlive = true;
 		this.direction = {
 			up: false,
 			left: false,
@@ -69,7 +69,7 @@ class Ship {
 				position: "absolute"
 			})
 
-			$canvas[0].append($gameOverTag)
+			$('#my-canvas').append($gameOverTag)
 		}
 	}
 }
@@ -105,19 +105,34 @@ const game = {
 		minutes: 0,
 		seconds: 0
 	},
+	score: 0,
 	ship: null,
 	block: [],
 	intervalID: null,
 
+	// create ship and start timer
 	playGame () {
 		const $player = new Ship()
 		$player.makeShip()
 		this.ship = $player
 		console.log(this.ship);
 
+		$('#score').text(`Score: ${this.score}`)
+		$('#time').text(`Time: ${this.time.hours}h ${this.time.minutes}m ${this.time.seconds}s`)
+
 		this.setTimer()
 	},
 
+	// adds score whenever an obstacle leaves the picture
+	showScore () {
+		if (this.block.length > 0 && this.block[0].y >= 750) {
+				this.score += 1;
+				$('#score').text(`Score: ${this.score}`)
+				this.block.shift()
+		}		
+	},
+
+	// creates a timer that logs seconds, minutes, and hours
 	setTimer () {
 		this.intervalID = setInterval( () => {
 			this.time.seconds++;
@@ -134,12 +149,15 @@ const game = {
 			}
 
 			$('#time').text(`Time: ${this.time.hours}h ${this.time.minutes}m ${this.time.seconds}s`)
+
+
 		}, 1000)
 	},
 
+	// makes 1 - 3 obstacles based on the number given
 	makeObstacles(num) {
 		
-		let regionSize = 600 / num
+		// let regionSize = 600 / num
 		const gap = 100
 
 		if (num === 1) {
@@ -163,15 +181,14 @@ const game = {
 				$obs.draw()
 				this.block.push($obs)
 			}
-
-			// console.log(this.block);
 		}
 	},
 
 	clearCanvas () {
 		$ctx.clearRect(0, 0, $canvas[0].width, $canvas[0].height)
 	},
-
+	
+	// check if the ship hits a block
 	checkCollision (ship, block) {
 		let testX = ship.x
 		let testY = ship.y
@@ -204,10 +221,13 @@ function animate () {
 
 	x++
 
+	// at seconds divisible by 2 AND 3, make 2 obstacles
 	if (x % 120 == 0 && x % 180 == 0) {
 		game.makeObstacles(2)
+	// at every 3 seconds, make 2 obstacles
 	} else if (x % 180 == 0) {
 		game.makeObstacles(2)
+	// at every 2 seconds, make 1 obstacle
 	} else if (x % 120 == 0) {
 		game.makeObstacles(1)
 	}
@@ -216,9 +236,11 @@ function animate () {
 		game.block[i].fall()
 		game.block[i].draw()
 
-		// if (x > 300) {
-		// 	game.block[i].speed = 5
-		// }
+		// if time is over a certain number, increase speed
+		if (x > 600) {
+			game.block[i].speed = 5
+		}
+
 
 		if (game.checkCollision(game.ship, game.block[i])) {
 			game.ship.isAlive = false
@@ -226,6 +248,8 @@ function animate () {
 			return;
 		}
 	}
+
+	game.showScore()
 	
 	it = window.requestAnimationFrame(animate)
 
@@ -236,7 +260,6 @@ animate()
 
 
 // any event listeners will go here
-
 $(document).on('keydown', (e) => {
 	if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) {
 		game.ship.setDirection(e.key)
