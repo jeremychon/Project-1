@@ -171,8 +171,12 @@ function animate () {
 
 	x++
 
-	if (x % 60 == 0) {
+	if (x % 120 == 0 && x % 180 == 0) {
 		game.makeObstacles(2)
+	} else if (x % 180 == 0) {
+		game.makeObstacles(2)
+	} else if (x % 120 == 0) {
+		game.makeObstacles(1)
 	}
 
 	for (let i = 0; i < game.block.length; i++) {
