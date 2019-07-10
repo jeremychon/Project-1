@@ -1,12 +1,12 @@
 
-const canvas = document.getElementById('my-canvas')
-const ctx = canvas.getContext('2d')
+const $canvas = $('#my-canvas')
+const $ctx = $canvas[0].getContext('2d')
 
 // all the ship information and actions go here
 class Ship {
-	constructor () {
+	constructor (name) {
 		// attributes: name, speed, score, color, type of ship, etc.
-		this.name = "";
+		this.name = name;
 		this.x = 300;
 		this.y = 680;
 		this.r = 25;
@@ -23,17 +23,17 @@ class Ship {
 
 	// movement going left and right (possibly up and down)
 	makeShip () {
-		ctx.beginPath()
-		ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2)
-		ctx.fillStyle = this.color;
-		ctx.fill()
+		$ctx.beginPath()
+		$ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2)
+		$ctx.fillStyle = this.color;
+		$ctx.fill()
 	}
 
 	moveShip () {
 		if (this.direction.up == true && this.y > this.r) this.y -= this.speed
 		if (this.direction.left == true && this.x > this.r) this.x -= this.speed
-		if (this.direction.down == true && this.y < canvas.height - this.r) this.y += this.speed
-		if (this.direction.right == true && this.x < canvas.width - this.r) this.x += this.speed
+		if (this.direction.down == true && this.y < $canvas[0].height - this.r) this.y += this.speed
+		if (this.direction.right == true && this.x < $canvas[0].width - this.r) this.x += this.speed
 	}
 
 	setDirection (key) {
@@ -54,7 +54,22 @@ class Ship {
 		if (this.isAlive === true) {
 			console.log('Keep going');
 		} else {
-			document.write(`<h1>Game Over</h1>`)
+			const $gameOverTag = $('<div/>').text("GAME OVER!");
+			$gameOverTag.css({
+				backgroundColor: "rgba(0, 0, 0)",
+				display: "flex",
+				justifyContent: "center",
+				alignItems: "center",
+				color: "white",
+				fontSize: "45px",
+				width: "400px",
+				height: "360px",
+				animation: "fadein 3s",
+				zIndex: "2",
+				position: "absolute"
+			})
+
+			$canvas[0].append($gameOverTag)
 		}
 	}
 }
@@ -70,10 +85,10 @@ class Obstacle {
 	}
 
 	draw () {
-		ctx.beginPath()
-		ctx.rect(this.x, this.y, this.width, this.height)
-		ctx.fillStyle = this.color
-		ctx.fill()
+		$ctx.beginPath()
+		$ctx.rect(this.x, this.y, this.width, this.height)
+		$ctx.fillStyle = this.color
+		$ctx.fill()
 	}
 
 	fall() {
@@ -85,22 +100,40 @@ class Obstacle {
 // all the game logic will go here
 const game = {
 
+	time: {
+		hours: 0,
+		minutes: 0,
+		seconds: 0
+	},
 	ship: null,
 	block: [],
 	intervalID: null,
 
 	playGame () {
-		const player = new Ship()
-		player.makeShip()
-		this.ship = player
+		const $player = new Ship()
+		$player.makeShip()
+		this.ship = $player
 		console.log(this.ship);
 
-		// this.makeObstacles()
+		this.setTimer()
 	},
 
 	// setTimer () {
 	// 	this.intervalID = setInterval( () => {
+	// 		this.time.seconds++;
 
+	// 		// every 60 seconds, increase the minute by 1
+	// 		if (this.time.seconds === 60) {
+	// 			this.time.minutes++
+	// 			this.time.seconds = 0;
+	// 		}
+
+	// 		// every 60 minutes, increase the hour by 1
+	// 		if (this.time.minutes === 60) {
+	// 			this.time.hours++
+	// 		}
+
+	// 		$('#time').text(`Time: ${this.time.hours}h ${this.time.minutes}m ${this.time.seconds}s`)
 	// 	}, 1000)
 	// },
 
@@ -111,33 +144,32 @@ const game = {
 
 		if (num === 1) {
 			for (let i = 1; i <= 1; i++) {
-			const obs = new Obstacle(Math.floor(Math.random() * 100) + 1, Math.floor(Math.random() * (500 - 200 + 1) + 200))
-			obs.draw()
-			this.block.push(obs)
+				const $obs = new Obstacle(Math.floor(Math.random() * 100) + 1, Math.floor(Math.random() * (500 - 200 + 1) + 200))
+				$obs.draw()
+				this.block.push($obs)
 			}
 		}
 
 		if (num === 2) {
 			for (let i = 0; i < 1; i++) {
-				const obs = new Obstacle(0, Math.floor(Math.random() * (400 - 100 + 1) + 100))
-				obs.draw()
-				this.block.push(obs)
+				const $obs = new Obstacle(0, Math.floor(Math.random() * (400 - 100 + 1) + 100))
+				$obs.draw()
+				this.block.push($obs)
 			}
 
 
 			for (let i = 0; i < 1; i += 2) {
-				const obs = new Obstacle(parseInt(this.block[this.block.length - 1].width) + 100, canvas.width - (parseInt(this.block[this.block.length - 1].width)))
-				obs.draw()
-				this.block.push(obs)
+				const $obs = new Obstacle(parseInt(this.block[this.block.length - 1].width) + 100, $canvas[0].width - (parseInt(this.block[this.block.length - 1].width)))
+				$obs.draw()
+				this.block.push($obs)
 			}
 
 			// console.log(this.block);
 		}
-
 	},
 
 	clearCanvas () {
-		ctx.clearRect(0, 0, canvas.width, canvas.height)
+		$ctx.clearRect(0, 0, $canvas[0].width, $canvas[0].height)
 	},
 
 	checkCollision (ship, block) {
@@ -154,6 +186,7 @@ const game = {
 		let distance = Math.sqrt((distX*distX) + (distY*distY))
 
 		if (distance <= ship.r) {
+			clearInterval(this.intervalID)
 			return true; 
 		}
 	},
@@ -183,6 +216,10 @@ function animate () {
 		game.block[i].fall()
 		game.block[i].draw()
 
+		// if (x > 300) {
+		// 	game.block[i].speed = 5
+		// }
+
 		if (game.checkCollision(game.ship, game.block[i])) {
 			game.ship.isAlive = false
 			game.ship.gameOver()
@@ -200,7 +237,7 @@ animate()
 
 // any event listeners will go here
 
-document.addEventListener('keydown', (e) => {
+$(document).on('keydown', (e) => {
 	if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) {
 		game.ship.setDirection(e.key)
 	}
@@ -211,7 +248,7 @@ document.addEventListener('keydown', (e) => {
 
 })
 
-document.addEventListener('keyup', (e) => {
+$(document).on('keyup', (e) => {
 	if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) {
 		game.ship.unsetDirection(e.key)
 	}

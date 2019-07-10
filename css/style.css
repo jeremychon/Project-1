@@ -5,4 +5,10 @@ body {
 canvas {
   border: 1px solid black;
   background-color: rgb(220, 220, 220);
-} 
+}
+
+#time {
+	height: 50px;
+	width: 150px;
+	background-color: lightblue;
+}
