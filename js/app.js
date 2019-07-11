@@ -7,10 +7,10 @@ class Ship {
 	constructor (name) {
 		// attributes: name, speed, score, color, type of ship, etc.
 		this.name = name;
-		this.x = 300;
-		this.y = 680;
+		this.x = 275;
+		this.y = 580;
 		this.r = 20;
-		this.color = 'black';
+		this.color = 'red';
 		this.speed = 7;
 		this.isAlive = true;
 		this.direction = {
@@ -106,8 +106,10 @@ const game = {
 		seconds: 0
 	},
 	score: 0,
+	level: 0,
 	ship: null,
 	block: [],
+	// create an array for "coins"
 	intervalID: null,
 
 	// create ship and start timer
@@ -117,8 +119,9 @@ const game = {
 		this.ship = $player
 		console.log(this.ship);
 
-		$('#score').text(`Score: ${this.score}`)
-		$('#time').text(`Time: ${this.time.hours}h ${this.time.minutes}m ${this.time.seconds}s`)
+		$('#lvl').text(`LEVEL:${this.level}`)
+		$('#score').text(`SCORE:${this.score}`)
+		$('#time').text(`TIME:${this.time.hours}h ${this.time.minutes}m ${this.time.seconds}s`)
 
 		this.setTimer()
 	},
@@ -127,9 +130,16 @@ const game = {
 	showScore () {
 		if (this.block.length > 0 && this.block[0].y >= 750) {
 				this.score += 1;
-				$('#score').text(`Score: ${this.score}`)
+				$('#score').text(`SCORE:${this.score}`)
 				this.block.shift()
 		}		
+	},
+
+	levelUp () {
+		if (this.time.seconds % 10 === 0 && this.time.seconds !== 0) {
+			this.level += 1
+			$('#lvl').text(`LEVEL:${this.level}`)		
+		}
 	},
 
 	// creates a timer that logs seconds, minutes, and hours
@@ -148,21 +158,19 @@ const game = {
 				this.time.hours++
 			}
 
-			$('#time').text(`Time: ${this.time.hours}h ${this.time.minutes}m ${this.time.seconds}s`)
-
-
+			$('#time').text(`TIME:${this.time.hours}h ${this.time.minutes}m ${this.time.seconds}s`)
 		}, 1000)
 	},
 
 	// makes 1 - 3 obstacles based on the number given
 	makeObstacles(num) {
 		
-		// let regionSize = 600 / num
+		// let region = 600 / num
 		const gap = 100
 
 		if (num === 1) {
 			for (let i = 1; i <= 1; i++) {
-				const $obs = new Obstacle(Math.floor(Math.random() * 100) + 1, Math.floor(Math.random() * (500 - 200 + 1) + 200))
+				const $obs = new Obstacle(Math.floor(Math.random() * 150) + 1, Math.floor(Math.random() * (400 - 200 + 1) + 200))
 				$obs.draw()
 				this.block.push($obs)
 			}
@@ -180,6 +188,22 @@ const game = {
 				const $obs = new Obstacle(parseInt(this.block[this.block.length - 1].width) + 100, $canvas[0].width - (parseInt(this.block[this.block.length - 1].width)))
 				$obs.draw()
 				this.block.push($obs)
+			}
+		}
+
+		if (num === 3) {
+			for (let i = 0; i < 1; i++) {
+				const $obs = new Obstacle(0, Math.floor(Math.random() * (200 - 50 + 1) + 50))
+				$obs.draw()
+				this.block.push($obs)
+			}
+
+			for (let i = 0; i < 1; i += 2) {
+				const $obs = new Obstacle()
+			}
+
+			for (let i = 0; i < 1; i += 3) {
+
 			}
 		}
 	},
@@ -221,6 +245,7 @@ function animate () {
 
 	x++
 
+	/// WHEN TO CREATE OBSTACLES
 	// at seconds divisible by 2 AND 3, make 2 obstacles
 	if (x % 120 == 0 && x % 180 == 0) {
 		game.makeObstacles(2)
@@ -228,7 +253,7 @@ function animate () {
 	} else if (x % 180 == 0) {
 		game.makeObstacles(2)
 	// at every 2 seconds, make 1 obstacle
-	} else if (x % 120 == 0) {
+	} else if (x % 60 == 0) {
 		game.makeObstacles(1)
 	}
 
@@ -236,10 +261,6 @@ function animate () {
 		game.block[i].fall()
 		game.block[i].draw()
 
-		// if time is over a certain number, increase speed
-		if (x > 600) {
-			game.block[i].speed = 5
-		}
 
 
 		if (game.checkCollision(game.ship, game.block[i])) {
@@ -248,7 +269,9 @@ function animate () {
 			return;
 		}
 	}
-
+	if(x % 600 === 0) {
+		game.levelUp()
+	}
 	game.showScore()
 	
 	it = window.requestAnimationFrame(animate)
@@ -258,13 +281,12 @@ function animate () {
 animate()
 
 
-
 // any event listeners will go here
 $(document).on('keydown', (e) => {
 	if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) {
 		game.ship.setDirection(e.key)
 	}
-	if(e.key==" ") {
+	if(e.key == " ") {
 		cancelAnimationFrame(it)
 		clearInterval(game.intervalID)
 	}
