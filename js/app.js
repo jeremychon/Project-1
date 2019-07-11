@@ -244,6 +244,15 @@ const game = {
 		this.ship = null
 		this.block = []
 	},
+
+	noToRestart () {
+		$('#endgame').empty()
+		const $noThanks = $('<div/>').attr('id', 'noThanks').text('Thanks for playing!').addClass('canvas-text-styles').css({
+			fontSize: "45px",
+			justifyContent: "center"
+		})
+		$('#endgame').append($noThanks)
+	},
 	
 	// check if the ship hits a block
 	checkCollision (ship, block) {
@@ -329,6 +338,10 @@ $(document).on('keydown', (e) => {
 		game.restart()
 		game.playGame()
 		animate();
+	}
+
+	if (e.key == 'n') {
+		game.noToRestart()
 	}
 
 	if(e.key == "q") {
