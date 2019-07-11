@@ -122,15 +122,18 @@ const game = {
 
 	endGame () {
 		this.clearCanvas()
-		$('#canvas-text').text('Game Over').addClass('canvas-text-styles').css({
+		const $gameOver = $('<div/>').attr('id', 'gameOver').text('Game Over').addClass('canvas-text-styles').css({
 			fontSize: "45px",
 			justifyContent: "center"
 		})
-		const $restart = $('<div/>').text('Would you like to restart?').addClass('canvas-text-styles').css({
+		$('#endgame').append($gameOver)
+
+		const $restart = $('<div/>').attr('id', 'restart').text('Would you like to restart?').addClass('canvas-text-styles').css({
 			marginTop: "20px"
 		})
 		$('#endgame').append($restart)
-		const $yesOrNo = $('<div/>').text('(Y/N)').addClass('canvas-text-styles').css({
+
+		const $yesOrNo = $('<div/>').attr('id', 'yesOrNo').text('(Y/N)').addClass('canvas-text-styles').css({
 			marginTop: "15px"
 		})
 		$('#endgame').append($yesOrNo)
@@ -175,7 +178,6 @@ const game = {
 	// makes 1 - 3 obstacles based on the number given
 	makeObstacles(num) {
 		
-		// let region = 600 / num
 		const gap = 100
 
 		if (num === 1) {
@@ -231,6 +233,16 @@ const game = {
 
 	clearCanvas () {
 		$ctx.clearRect(0, 0, $canvas[0].width, $canvas[0].height)
+	},
+
+	restart () {
+		this.time.seconds = 0
+		this.time.minutes = 0
+		this.time.hours = 0
+		this.score = 0
+		this.level = 0
+		this.ship = null
+		this.blocl = []
 	},
 	
 	// check if the ship hits a block
@@ -289,7 +301,6 @@ function animate () {
 		}
 	}
 
-
 	if (x % 600 === 0) {
 		game.levelUp()
 	}
@@ -300,22 +311,29 @@ function animate () {
 
 }
 
-// animate()
-
 
 // any event listeners will go here
 $(document).on('keydown', (e) => {
 	if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) {
 		game.ship.setDirection(e.key)
 	}
-	if(e.key == "q") {
-		cancelAnimationFrame(it)
-		clearInterval(game.intervalID)
-	}
+
 	if (e.key == " ") {
 		$('#canvas-text').removeClass().text(" ")
 		game.playGame();
 		animate()
+	}
+
+	if (e.key == "y") {
+		$('#endgame').empty()
+		game.restart()
+		game.playGame()
+		animate();
+	}
+
+	if(e.key == "q") {
+		cancelAnimationFrame(it)
+		clearInterval(game.intervalID)
 	}
 
 })

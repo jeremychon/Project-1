@@ -50,8 +50,10 @@ p {
 }
 
 #endgame {
+	width: 500px;
 	position: absolute;
 	display: flex;
+	justify-content: center;
 	flex-wrap: wrap;
 	align-content: space-around;
 	align-self: center;
