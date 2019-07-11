@@ -242,7 +242,7 @@ const game = {
 		this.score = 0
 		this.level = 0
 		this.ship = null
-		this.blocl = []
+		this.block = []
 	},
 	
 	// check if the ship hits a block
