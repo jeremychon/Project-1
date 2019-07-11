@@ -72,12 +72,15 @@ class Obstacle {
 	}
 
 	speedUp () {
-		if (game.level > 10) {
+		if (game.level >= 10) {
+			this.speed = 15
+		}
+		if (game.level >= 8) {
+			this.speed = 10
+		} else if (game.level >= 6) {
 			this.speed = 8
-		} else if (game.level >= 8) {
+		} else if (game.level >= 4) {
 			this.speed = 6
-		} else if (game.level >= 5) {
-			this.speed = 5
 		} else if (game.level >= 2) {
 			this.speed = 4
 		} else {
@@ -293,10 +296,10 @@ function animate () {
 		game.makeObstacles(3)
 	// at every 3 seconds, make 2 obstacles
 	} else if (x % 180 == 0) {
-		game.makeObstacles(2)
+		game.makeObstacles(1)
 	// at every 2 seconds, make 1 obstacle
 	} else if (x % 60 == 0) {
-		game.makeObstacles(1)
+		game.makeObstacles(2)
 	}
 
 	for (let i = 0; i < game.block.length; i++) {
@@ -310,7 +313,7 @@ function animate () {
 		}
 	}
 
-	if (x % 600 === 0) {
+	if (x % 240 === 0) {
 		game.levelUp()
 	}
 
