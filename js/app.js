@@ -12,7 +12,6 @@ class Ship {
 		this.r = 20;
 		this.color = 'red';
 		this.speed = 7;
-		this.isAlive = true;
 		this.direction = {
 			up: false,
 			left: false,
@@ -48,29 +47,6 @@ class Ship {
 		if (key == 'ArrowLeft') this.direction.left = false;
 		if (key == 'ArrowDown') this.direction.down = false;
 		if (key == 'ArrowRight') this.direction.right = false;
-	}
-
-	gameOver () {
-		if (this.isAlive === true) {
-			console.log('Keep going');
-		} else {
-			const $gameOverTag = $('<div/>').text("GAME OVER!");
-			$gameOverTag.css({
-				backgroundColor: "rgba(0, 0, 0)",
-				display: "flex",
-				justifyContent: "center",
-				alignItems: "center",
-				color: "white",
-				fontSize: "45px",
-				width: "400px",
-				height: "360px",
-				animation: "fadein 3s",
-				zIndex: "2",
-				position: "absolute"
-			})
-
-			$('#my-canvas').append($gameOverTag)
-		}
 	}
 }
 
@@ -112,6 +88,10 @@ const game = {
 	// create an array for "coins"
 	intervalID: null,
 
+	startGame () {
+		$('#canvas-text').text('Press SPACE to start the game')
+	},
+
 	// create ship and start timer
 	playGame () {
 		const $player = new Ship()
@@ -126,6 +106,14 @@ const game = {
 		this.setTimer()
 	},
 
+	endGame () {
+		this.clearCanvas()
+		$('#canvas-text').text('Game Over').addClass('canvas-text-styles').css({
+			animation: "fadein 3s"
+		})
+
+	},
+
 	// adds score whenever an obstacle leaves the picture
 	showScore () {
 		if (this.block.length > 0 && this.block[0].y >= 750) {
@@ -135,11 +123,19 @@ const game = {
 		}		
 	},
 
+	// shows the level the player is in
 	levelUp () {
-		if (this.time.seconds % 10 === 0 && this.time.seconds !== 0) {
-			this.level += 1
-			$('#lvl').text(`LEVEL:${this.level}`)		
-		}
+		this.level += 1
+		$('#lvl').text(`LEVEL:${this.level}`)
+
+	},
+
+	speedUp () {
+		for (let i = 1; i <= 1; i++) {
+			if (this.level % 1 === 0) {
+				this.block[i].speed += 3
+			}
+		}	
 	},
 
 	// creates a timer that logs seconds, minutes, and hours
@@ -173,6 +169,10 @@ const game = {
 				const $obs = new Obstacle(Math.floor(Math.random() * 150) + 1, Math.floor(Math.random() * (400 - 200 + 1) + 200))
 				$obs.draw()
 				this.block.push($obs)
+
+				// if (this.level % 1 === 0 && this.level !== 0) {
+				// 	$obs.speed += 1
+				// }
 			}
 		}
 
@@ -181,6 +181,10 @@ const game = {
 				const $obs = new Obstacle(0, Math.floor(Math.random() * (400 - 100 + 1) + 100))
 				$obs.draw()
 				this.block.push($obs)
+
+				// if (this.level % 1 === 0 && this.level !== 0) {
+				// 	$obs.speed += 1
+				// }
 			}
 
 
@@ -188,6 +192,10 @@ const game = {
 				const $obs = new Obstacle(parseInt(this.block[this.block.length - 1].width) + 100, $canvas[0].width - (parseInt(this.block[this.block.length - 1].width)))
 				$obs.draw()
 				this.block.push($obs)
+
+				// if (this.level % 1 === 0 && this.level !== 0) {
+				// 	$obs.speed += 1
+				// }
 			}
 		}
 
@@ -233,7 +241,7 @@ const game = {
 	},
 }
 
-game.playGame()
+game.startGame()
 
 let x = 0;
 let it;
@@ -262,23 +270,28 @@ function animate () {
 		game.block[i].draw()
 
 
-
 		if (game.checkCollision(game.ship, game.block[i])) {
-			game.ship.isAlive = false
-			game.ship.gameOver()
+			game.endGame()
 			return;
 		}
 	}
-	if(x % 600 === 0) {
+
+	if (x % 600 === 0) {
 		game.levelUp()
+		game.speedUp()
 	}
+
+	// if (x % 60 === 0) {
+
+	// }
+
 	game.showScore()
 	
 	it = window.requestAnimationFrame(animate)
 
 }
 
-animate()
+// animate()
 
 
 // any event listeners will go here
@@ -286,9 +299,14 @@ $(document).on('keydown', (e) => {
 	if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) {
 		game.ship.setDirection(e.key)
 	}
-	if(e.key == " ") {
+	if(e.key == "q") {
 		cancelAnimationFrame(it)
 		clearInterval(game.intervalID)
+	}
+	if (e.key == " ") {
+		$('#canvas-text').removeClass()
+		game.playGame();
+		animate()
 	}
 
 })

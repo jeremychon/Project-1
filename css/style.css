@@ -1,5 +1,4 @@
 body {
-	/*background-color: black;*/
 	display: flex;
 	background-color: black;
 	max-width: 1200px;
@@ -35,7 +34,7 @@ p {
 #screen {
 	display: flex;
 	flex-wrap: wrap;
-	/*justify-content: center;*/
+	justify-content: center;
 }
 
 #rules {
@@ -45,7 +44,19 @@ p {
 #my-canvas {
   border: 5px solid green;
   background-color: black;
-  margin: 0 0 0 15px;
+  z-index: -1;
+}
+
+.canvas-text-styles {
+	width: 450px;
+	text-align: center;
+	font-family: 'Press Start 2P', cursive;
+	color: green;
+	font-size: 25px;
+	position: absolute;
+	z-index: 1;
+	display: flex;
+	align-self: center;
 }
 
 #stats {
