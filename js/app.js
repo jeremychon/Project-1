@@ -72,7 +72,9 @@ class Obstacle {
 	}
 
 	speedUp () {
-		if (game.level >= 8) {
+		if (game.level > 10) {
+			this.speed = 8
+		} else if (game.level >= 8) {
 			this.speed = 6
 		} else if (game.level >= 5) {
 			this.speed = 5
