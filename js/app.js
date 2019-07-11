@@ -122,7 +122,18 @@ const game = {
 
 	endGame () {
 		this.clearCanvas()
-		$('#canvas-text').text('Game Over').addClass('canvas-text-styles')
+		$('#canvas-text').text('Game Over').addClass('canvas-text-styles').css({
+			fontSize: "45px",
+			justifyContent: "center"
+		})
+		const $restart = $('<div/>').text('Would you like to restart?').addClass('canvas-text-styles').css({
+			marginTop: "20px"
+		})
+		$('#endgame').append($restart)
+		const $yesOrNo = $('<div/>').text('(Y/N)').addClass('canvas-text-styles').css({
+			marginTop: "15px"
+		})
+		$('#endgame').append($yesOrNo)
 	},
 
 	// adds score whenever an obstacle leaves the picture
@@ -215,7 +226,6 @@ const game = {
 				$obs.speedUp()
 				this.block.push($obs)
 			}
-			console.log(this.block);
 		}
 	},
 
@@ -280,7 +290,7 @@ function animate () {
 	}
 
 
-	if (x % 300 === 0) {
+	if (x % 600 === 0) {
 		game.levelUp()
 	}
 
@@ -303,7 +313,7 @@ $(document).on('keydown', (e) => {
 		clearInterval(game.intervalID)
 	}
 	if (e.key == " ") {
-		$('#canvas-text').removeClass()
+		$('#canvas-text').removeClass().text(" ")
 		game.playGame();
 		animate()
 	}
